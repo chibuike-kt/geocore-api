@@ -6,8 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use TarfinLabs\LaravelSpatial\Traits\HasSpatial;
+use Illuminate\Database\Eloquent\Model;
 
-class GeofenceEvent extends BaseModel
+class GeofenceEvent extends Model
 {
   use HasFactory;
   use HasSpatial;

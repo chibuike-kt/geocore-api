@@ -1,20 +1,17 @@
 <?php
-// app/Models/AuditLog.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model; 
 
-class AuditLog extends BaseModel
+class AuditLog extends Model
 {
   use HasFactory;
 
   public $incrementing = true;
   protected $keyType   = 'integer';
 
-  /**
-   * AuditLog is append-only. Never update a log entry.
-   */
   const UPDATED_AT = null;
 
   protected $fillable = [
@@ -31,12 +28,6 @@ class AuditLog extends BaseModel
     'created_at' => 'datetime',
   ];
 
-  /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
   public function scopeForEntity($query, string $type, string $id)
   {
     return $query->where('entity_type', $type)
@@ -48,15 +39,6 @@ class AuditLog extends BaseModel
     return $query->where('action', $action);
   }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Static Helpers
-    |--------------------------------------------------------------------------
-    */
-
-  /**
-   * Write an audit entry. Call this from services, never from controllers.
-   */
   public static function record(
     string $entityType,
     string $entityId,

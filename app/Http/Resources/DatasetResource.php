@@ -1,7 +1,4 @@
 <?php
-
-// app/Http/Resources/DatasetResource.php
-
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;

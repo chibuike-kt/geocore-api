@@ -1,11 +1,14 @@
 <?php
+
+// app/Http/Requests/Dataset/CreateDatasetRequest.php
+
 namespace App\Http\Requests\Dataset;
 
 use App\Models\Dataset;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateDatasetRequest extends FormRequest
+class CreateDatasetRequest extends FormRequest
 {
   public function authorize(): bool
   {
@@ -15,9 +18,10 @@ class UpdateDatasetRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'name'        => ['sometimes', 'string', 'min:2', 'max:255'],
-      'type'        => ['sometimes', 'string', Rule::in(Dataset::TYPES)],
+      'name'        => ['required', 'string', 'min:2', 'max:255'],
+      'type'        => ['required', 'string', Rule::in(Dataset::TYPES)],
       'description' => ['nullable', 'string', 'max:2000'],
+      'srid'        => ['nullable', 'integer'],
       'metadata'    => ['nullable', 'array'],
     ];
   }
@@ -27,5 +31,15 @@ class UpdateDatasetRequest extends FormRequest
     return [
       'type.in' => 'Type must be one of: ' . implode(', ', Dataset::TYPES),
     ];
+  }
+
+  /**
+   * Trim string inputs before validation.
+   */
+  protected function prepareForValidation(): void
+  {
+    $this->merge([
+      'name' => trim($this->name ?? ''),
+    ]);
   }
 }
