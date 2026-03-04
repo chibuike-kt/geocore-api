@@ -4,7 +4,9 @@
 
 use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\MissionController;
 use App\Http\Controllers\QueryController;
+use App\Http\Controllers\TelemetryController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -19,7 +21,6 @@ Route::prefix('v1')->group(function () {
   /*
     |--------------------------------------------------------------------------
     | Features
-    | bulk must be defined before the general store route
     |--------------------------------------------------------------------------
     */
   Route::post('datasets/{datasetId}/features/bulk', [FeatureController::class, 'bulk']);
@@ -29,14 +30,22 @@ Route::prefix('v1')->group(function () {
   /*
     |--------------------------------------------------------------------------
     | Spatial Queries
-    | within and intersects use POST because they accept a geometry body.
-    | radius and nearest use GET because they only need query parameters.
     |--------------------------------------------------------------------------
     */
   Route::prefix('query')->group(function () {
-    Route::post('within',      [QueryController::class, 'within']);
-    Route::get('radius',       [QueryController::class, 'radius']);
-    Route::get('nearest',      [QueryController::class, 'nearest']);
-    Route::post('intersects',  [QueryController::class, 'intersects']);
+    Route::post('within',     [QueryController::class, 'within']);
+    Route::get('radius',      [QueryController::class, 'radius']);
+    Route::get('nearest',     [QueryController::class, 'nearest']);
+    Route::post('intersects', [QueryController::class, 'intersects']);
   });
+
+  /*
+    |--------------------------------------------------------------------------
+    | Missions
+    |--------------------------------------------------------------------------
+    */
+  Route::apiResource('missions', MissionController::class);
+  Route::patch('missions/{missionId}/status',    [MissionController::class, 'status']);
+  Route::post('missions/{missionId}/telemetry',  [TelemetryController::class, 'store']);
+  Route::get('missions/{missionId}/track',       [TelemetryController::class, 'track']);
 });
