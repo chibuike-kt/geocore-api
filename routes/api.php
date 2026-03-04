@@ -2,6 +2,7 @@
 
 // routes/api.php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\GeofenceController;
@@ -53,11 +54,22 @@ Route::prefix('v1')->group(function () {
   /*
     |--------------------------------------------------------------------------
     | Geofences
-    | evaluate must be defined BEFORE the resource routes so it is not
-    | caught by the {geofence} parameter as an ID.
     |--------------------------------------------------------------------------
     */
-  Route::post('geofences/evaluate',         [GeofenceController::class, 'evaluate']);
-  Route::get('geofences/{id}/events',       [GeofenceController::class, 'events']);
+  Route::post('geofences/evaluate',     [GeofenceController::class, 'evaluate']);
+  Route::get('geofences/{id}/events',   [GeofenceController::class, 'events']);
   Route::apiResource('geofences', GeofenceController::class);
+
+  /*
+    |--------------------------------------------------------------------------
+    | Analytics
+    |--------------------------------------------------------------------------
+    */
+  Route::prefix('analytics')->group(function () {
+    Route::post('buffer',   [AnalyticsController::class, 'buffer']);
+    Route::post('coverage', [AnalyticsController::class, 'coverage']);
+    Route::post('density',  [AnalyticsController::class, 'density']);
+    Route::post('cluster',  [AnalyticsController::class, 'cluster']);
+    Route::get('extent',    [AnalyticsController::class, 'extent']);
+  });
 });
