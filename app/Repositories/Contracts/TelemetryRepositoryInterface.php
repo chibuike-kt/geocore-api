@@ -1,5 +1,4 @@
 <?php
-// app/Repositories/Contracts/TelemetryRepositoryInterface.php
 
 namespace App\Repositories\Contracts;
 
@@ -12,4 +11,5 @@ interface TelemetryRepositoryInterface
   public function bulkCreate(array $records): int;
   public function getTrack(string $missionId): Collection;
   public function getLatestPing(string $missionId): ?Telemetry;
+  public function getTrackAsLineString(string $missionId): ?object;
 }

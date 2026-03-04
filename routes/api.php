@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\GeofenceController;
 use App\Http\Controllers\MissionController;
 use App\Http\Controllers\QueryController;
 use App\Http\Controllers\TelemetryController;
@@ -41,11 +42,22 @@ Route::prefix('v1')->group(function () {
 
   /*
     |--------------------------------------------------------------------------
-    | Missions
+    | Missions + Telemetry
     |--------------------------------------------------------------------------
     */
   Route::apiResource('missions', MissionController::class);
-  Route::patch('missions/{missionId}/status',    [MissionController::class, 'status']);
-  Route::post('missions/{missionId}/telemetry',  [TelemetryController::class, 'store']);
-  Route::get('missions/{missionId}/track',       [TelemetryController::class, 'track']);
+  Route::patch('missions/{missionId}/status',   [MissionController::class, 'status']);
+  Route::post('missions/{missionId}/telemetry', [TelemetryController::class, 'store']);
+  Route::get('missions/{missionId}/track',      [TelemetryController::class, 'track']);
+
+  /*
+    |--------------------------------------------------------------------------
+    | Geofences
+    | evaluate must be defined BEFORE the resource routes so it is not
+    | caught by the {geofence} parameter as an ID.
+    |--------------------------------------------------------------------------
+    */
+  Route::post('geofences/evaluate',         [GeofenceController::class, 'evaluate']);
+  Route::get('geofences/{id}/events',       [GeofenceController::class, 'events']);
+  Route::apiResource('geofences', GeofenceController::class);
 });
