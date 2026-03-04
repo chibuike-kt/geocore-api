@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\DatasetController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\GeofenceController;
 use App\Http\Controllers\MissionController;
@@ -56,8 +57,8 @@ Route::prefix('v1')->group(function () {
     | Geofences
     |--------------------------------------------------------------------------
     */
-  Route::post('geofences/evaluate',     [GeofenceController::class, 'evaluate']);
-  Route::get('geofences/{id}/events',   [GeofenceController::class, 'events']);
+  Route::post('geofences/evaluate',   [GeofenceController::class, 'evaluate']);
+  Route::get('geofences/{id}/events', [GeofenceController::class, 'events']);
   Route::apiResource('geofences', GeofenceController::class);
 
   /*
@@ -71,5 +72,18 @@ Route::prefix('v1')->group(function () {
     Route::post('density',  [AnalyticsController::class, 'density']);
     Route::post('cluster',  [AnalyticsController::class, 'cluster']);
     Route::get('extent',    [AnalyticsController::class, 'extent']);
+  });
+
+  /*
+    |--------------------------------------------------------------------------
+    | Export
+    |--------------------------------------------------------------------------
+    */
+  Route::prefix('export')->group(function () {
+    Route::post('/',                      [ExportController::class, 'export']);
+    Route::get('status/{exportId}',       [ExportController::class, 'status']);
+    Route::get('download/{exportId}',     [ExportController::class, 'download']);
+    Route::post('geojson',                [ExportController::class, 'geojson']);
+    Route::post('csv',                    [ExportController::class, 'csv']);
   });
 });
