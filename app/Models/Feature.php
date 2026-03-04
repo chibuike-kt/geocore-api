@@ -1,28 +1,24 @@
 <?php
-// app/Models/Feature.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use TarfinLabs\LaravelSpatial\Traits\HasSpatial;
-use TarfinLabs\LaravelSpatial\Types\Point;
-use TarfinLabs\LaravelSpatial\Types\LineString;
-use TarfinLabs\LaravelSpatial\Types\Polygon;
+// Remove the HasSpatial import entirely
 
 class Feature extends BaseModel
 {
   use HasFactory;
-  use HasSpatial;
+  // Remove: use HasSpatial;
 
   protected $fillable = [
     'dataset_id',
     'name',
     'geometry_type',
-    'geometry',
     'properties',
     'source_id',
     'hash',
+    // Remove 'geometry' from fillable — we handle it via raw SQL
   ];
 
   protected $casts = [
@@ -31,14 +27,8 @@ class Feature extends BaseModel
     'updated_at' => 'datetime',
   ];
 
-  /**
-   * Geometry column declared for the HasSpatial trait.
-   */
-  protected array $spatialFields = ['geometry'];
+  // Remove the $spatialFields property entirely
 
-  /**
-   * Valid geometry types.
-   */
   const GEOMETRY_TYPES = [
     'Point',
     'LineString',
@@ -49,22 +39,10 @@ class Feature extends BaseModel
     'GeometryCollection',
   ];
 
-  /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
-
   public function dataset(): BelongsTo
   {
     return $this->belongsTo(Dataset::class);
   }
-
-  /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
 
   public function scopeOfType($query, string $geometryType)
   {
@@ -74,42 +52,5 @@ class Feature extends BaseModel
   public function scopeInDataset($query, string $datasetId)
   {
     return $query->where('dataset_id', $datasetId);
-  }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Helpers
-    |--------------------------------------------------------------------------
-    */
-
-  /**
-   * Return geometry as a GeoJSON array.
-   */
-  public function toGeoJsonFeature(): array
-  {
-    return [
-      'type'       => 'Feature',
-      'id'         => $this->id,
-      'geometry'   => json_decode($this->getRawGeometry(), true),
-      'properties' => array_merge($this->properties ?? [], [
-        'name'         => $this->name,
-        'dataset_id'   => $this->dataset_id,
-        'geometry_type' => $this->geometry_type,
-        'created_at'   => $this->created_at?->toISOString(),
-      ]),
-    ];
-  }
-
-  /**
-   * Get raw geometry as GeoJSON string from PostGIS.
-   */
-  public function getRawGeometry(): string
-  {
-    $result = \DB::selectOne(
-      'SELECT ST_AsGeoJSON(geometry) as geojson FROM features WHERE id = ?',
-      [$this->id]
-    );
-
-    return $result?->geojson ?? '{}';
   }
 }

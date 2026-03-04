@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 class GeofenceEvent extends Model
 {
   use HasFactory;
-  use HasSpatial;
 
   public $incrementing = true;
   protected $keyType   = 'integer';

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\JsonResponse;
+use App\Exceptions\InvalidGeometryException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -36,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /*
         |----------------------------------------------------------------------
-        | Not Found HTTP → 404
+        | Route Not Found → 404
         |----------------------------------------------------------------------
         */
         $exceptions->render(function (NotFoundHttpException $e): JsonResponse {
@@ -53,8 +54,32 @@ return Application::configure(basePath: dirname(__DIR__))
         */
         $exceptions->render(function (ValidationException $e): JsonResponse {
             return response()->json([
-                'error'   => 'Validation failed.',
-                'errors'  => $e->errors(),
+                'error'  => 'Validation failed.',
+                'errors' => $e->errors(),
             ], 422);
+        });
+
+        /*
+        |----------------------------------------------------------------------
+        | Invalid Geometry → 422
+        |----------------------------------------------------------------------
+        */
+        $exceptions->render(function (InvalidGeometryException $e): JsonResponse {
+            return response()->json([
+                'error'   => 'Invalid geometry.',
+                'message' => $e->getMessage(),
+            ], 422);
+        });
+
+        /*
+        |----------------------------------------------------------------------
+        | Invalid Argument → 400
+        |----------------------------------------------------------------------
+        */
+        $exceptions->render(function (\InvalidArgumentException $e): JsonResponse {
+            return response()->json([
+                'error'   => 'Bad request.',
+                'message' => $e->getMessage(),
+            ], 400);
         });
     })->create();

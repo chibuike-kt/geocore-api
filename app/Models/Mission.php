@@ -10,7 +10,6 @@ use TarfinLabs\LaravelSpatial\Traits\HasSpatial;
 class Mission extends BaseModel
 {
   use HasFactory;
-  use HasSpatial;
 
   protected $fillable = [
     'name',
